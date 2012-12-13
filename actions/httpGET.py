@@ -22,6 +22,8 @@ class httpGET():
         beers_links = SoupStrainer('a', href=re.compile('beers'))
         soup = BeautifulSoup(self._page, parseOnlyThese=beers_links)
         beers = []
+        intro = u"Voici les nouvelles bières à la fine mousse :"
+        beers.append(intro)
         for tag in soup.findAll("a"):
             beers.append(tag.string.split('(')[0].strip())
         return beers
