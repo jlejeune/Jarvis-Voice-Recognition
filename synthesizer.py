@@ -71,14 +71,16 @@ class synthesizer():
         self.player.set_state(gst.STATE_PLAYING)
 
     def download(self, text, lang="en", filename="translate_tts"):
-        req = Request(url='http://translate.google.com/translate_tts')
-        # Needed otherwise return 403 Forbidden
-        req.add_header('User-Agent', 'My agent !')
-        req.add_data("tl=" + lang + "&q=" + text + "&ie=UTF-8")
-        fin = urlopen(req)
-        mp3 = fin.read()
+        # Open file
         fout = file(filename + ".mp3", "wb")
-        fout.write(mp3)
+        for splitted_lines in textwrap.wrap(text, MAX_WRAP):
+            req = Request(url='http://translate.google.com/translate_tts')
+            # Needed otherwise return 403 Forbidden
+            req.add_header('User-Agent', 'My agent !')
+            req.add_data("tl=" + lang + "&q=" + splitted_lines + "&ie=UTF-8")
+            fin = urlopen(req)
+            mp3 = fin.read()
+            fout.write(mp3)
         fout.close()
 
     def setVolume(self, val):
