@@ -18,5 +18,5 @@ if __name__ == "__main__":
     # Ask menu
     website = "http://www.lafinemousse.fr/carte"
     get = httpGET(website)
-    tts_string = ',+'.join(get.return_menu()).replace(' ', '+')
+    tts_string = ' +,'.join(get.return_menu()).replace(' ', '+')
     synthesizer().say(tts_string)
