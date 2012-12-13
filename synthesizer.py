@@ -55,6 +55,10 @@ class synthesizer():
         '''
         NB for Non-Blocking
         '''
+        if len(text) > MAX_WRAP:
+            print 'BE CAREFUL, your text will be cut because of its size : %s'\
+                % len(text)
+        text = textwrap.wrap(text, MAX_WRAP)[0]
         music_stream_uri = 'http://translate.google.com/translate_tts?tl=' + \
                 lang + '&q=' + text + "&ie=UTF-8"
         # Create the player
@@ -101,6 +105,6 @@ if __name__ == "__main__":
     tts_string = '+'.join(input_string)
 
     synthesizer().say(tts_string, lang)
-    #synthesizer().download(tts_string, lang, '_'.join(input_string))
+    #synthesizer().download(tts_string, lang)
 
     sys.exit(0)
