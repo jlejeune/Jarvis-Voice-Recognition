@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     a = json.loads(data.read())
     try:
-        #print a['hypotheses'][0]['utterance']
-        print a
+        print 'CONFIDENCE :', float(a['hypotheses'][0]['confidence'])*100, '%'
+        print 'UTTERANCE :', a['hypotheses'][0]['utterance']
     except Exception, err:
         print err, a
