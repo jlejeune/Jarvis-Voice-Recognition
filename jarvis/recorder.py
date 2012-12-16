@@ -10,6 +10,7 @@ import os
 THRESHOLD = 500 #200 ?
 CHUNK_SIZE = 1024
 FORMAT = pyaudio.paInt16
+CHANNEL = 2
 RATE = 44100 #16000 ?
 #NQUIT = 40 # number of silent frames before terminating the program
 
@@ -79,8 +80,11 @@ def record():
     it without getting chopped off.
     """
     p = pyaudio.PyAudio()
-    stream = p.open(format=FORMAT, channels=1, rate=RATE,
-                    input=True, output=True,
+    stream = p.open(format=FORMAT,
+                    channels=CHANNEL,
+                    rate=RATE,
+                    input=True,
+                    output=True,
                     frames_per_buffer=CHUNK_SIZE)
 
     num_silent = 0
@@ -95,7 +99,6 @@ def record():
         LRtn.extend(L)
 
         silent = is_silent(L)
-        #print silent, num_silent, L[:10]
 
         if silent and snd_started:
             num_silent += 1
@@ -122,7 +125,7 @@ def record_to_file(path):
     data = pack('<' + ('h'*len(data)), *data)
 
     wf = wave.open(path, 'wb')
-    wf.setnchannels(1)
+    wf.setnchannels(CHANNEL)
     wf.setsampwidth(sample_width)
     wf.setframerate(RATE)
     wf.writeframes(data)
