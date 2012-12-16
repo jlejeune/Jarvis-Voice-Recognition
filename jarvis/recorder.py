@@ -5,11 +5,23 @@ from array import array
 from struct import unpack, pack
 import pyaudio
 import wave
+import os
 
-THRESHOLD = 500
+THRESHOLD = 500 #200 ?
 CHUNK_SIZE = 1024
 FORMAT = pyaudio.paInt16
-RATE = 44100
+RATE = 44100 #16000 ?
+#NQUIT = 40 # number of silent frames before terminating the program
+
+'''
+This class permits to record wave using microphone.
+    - need flac package to make convertion (wav => flac)
+'''
+
+
+class recorder:
+    def __init__(self):
+        pass
 
 def is_silent(L):
     "Returns `True` if below the 'silent' threshold"
@@ -116,8 +128,20 @@ def record_to_file(path):
     wf.writeframes(data)
     wf.close()
 
+def convert_wav_to_flac(path):
+    from subprocess import Popen, PIPE
+    cmd = "flac -f " + path
+    p = Popen(cmd , shell=True, stdout=PIPE, stderr=PIPE)
+    out, err = p.communicate()
+    if int(p.returncode) != 0:
+        print err.rstrip()
+    else:
+        os.remove(path)
+
 if __name__ == '__main__':
     print("please speak a word into the microphone")
     path = 'demo.wav'
     record_to_file(path)
     print("done - result written to %s" %path)
+    convert_wav_to_flac(path)
+    print("convert OK")
