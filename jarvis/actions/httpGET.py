@@ -3,6 +3,7 @@
 
 import urllib2
 import re
+import json
 from datetime import datetime
 from BeautifulSoup import BeautifulSoup, SoupStrainer
 
@@ -99,14 +100,14 @@ class httpGET():
             prog = dict()
             for div in tag.findAll("div"):
                 if div["class"] in sub_attrs:
-                    prog[sub_attrs[div["class"]]] = div.string
+                    prog[sub_attrs[div["class"]]] = str(div.string)
             if prog != {}:
                 if datetime.strptime(prog['heure début'], '%H:%M').time() <= time \
                    and \
                    datetime.strptime(prog['heure fin'], '%H:%M').time() >= time:
                     epg[today_key].append(prog)
                     break
-        return epg
+        return json.dumps(epg, ensure_ascii=False)
 
 if __name__ == "__main__":
     import sys
