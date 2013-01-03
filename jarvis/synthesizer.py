@@ -10,7 +10,7 @@ import textwrap
 MAX_WRAP = 100
 
 '''
-This class permits to generate speech via Google Translate Text-o-Speech API.
+This class permits to generate speech via Google Translate Text-to-Speech API.
 
 Need packages :
     - python-gst
