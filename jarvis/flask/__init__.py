@@ -30,5 +30,5 @@ application = Flask(__name__)
 application.config.update(vars(options))
 
 # Register modules
-from jarvis.flask.views import epg
+from jarvis.flask.views.epg import epg
 application.register_blueprint(epg)
