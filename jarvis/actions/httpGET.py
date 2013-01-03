@@ -78,7 +78,7 @@ class httpGET():
         epg = dict()
         today = datetime.now()
         today_key = today.strftime('%A %d %B %Y')
-        hour = today.time()
+        time = today.time()
         epg[today_key] = list()
 
         # Grep html page
@@ -91,6 +91,7 @@ class httpGET():
                         'heure_prog': 'heure début',
                         'heurefin_prog hidden': 'heure fin',
                         'lib_prog': 'titre',
+                        'duree_prog' : 'durée',
                     }
 
         # Extract data from containers
@@ -100,9 +101,9 @@ class httpGET():
                 if div["class"] in sub_attrs:
                     prog[sub_attrs[div["class"]]] = div.string
             if prog != {}:
-                if datetime.strptime(prog['heure début'], '%H:%M').time() <= hour \
+                if datetime.strptime(prog['heure début'], '%H:%M').time() <= time \
                    and \
-                   datetime.strptime(prog['heure fin'], '%H:%M').time() >= hour:
+                   datetime.strptime(prog['heure fin'], '%H:%M').time() >= time:
                     epg[today_key].append(prog)
                     break
         return epg
