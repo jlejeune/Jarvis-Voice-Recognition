@@ -73,7 +73,7 @@ class httpGET():
             beers.append(tag.string.split('(')[0].strip())
         return beers
 
-    def return_epg(self, stream):
+    def return_epg(self):
         # Init variables
         epg = dict()
         today = datetime.now()
@@ -138,7 +138,7 @@ if __name__ == "__main__":
 
         # Init httpGET object with given website
         get = httpGET(website)
-        print get.return_epg(stream)
+        print get.return_epg()
     else:
         print 'Given action is not defined!\nOnly beer or epg for now'
         sys.exit(1)
