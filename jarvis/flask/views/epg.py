@@ -18,9 +18,11 @@ def get_epg(stream=None):
     Get epg from given stream or get full epg if no one stream is given
     @param stream    : stream
     """
+    # Encode in utf8 given param (it's in unicode)
+    stream = stream.encode('utf8', "ignore")
     if stream not in EPG_URLS:
-        return 'Your given stream %s is not defined in %s' %(stream,
-                EPG_URLS.keys()), 500
+        return 'Your given stream %s is not defined in  [%s]' %(stream,
+               ', '.join(EPG_URLS.keys())), 500
     try:
         get = httpGET(EPG_URLS[stream])
         epg = get.return_epg()
