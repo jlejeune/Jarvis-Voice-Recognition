@@ -3,6 +3,7 @@
 
 from flask import Blueprint
 import logging
+import json
 from jarvis.actions.httpGET import httpGET, EPG_URLS
 
 epg = Blueprint('epg', __name__)
@@ -22,12 +23,12 @@ def get_epg(stream=None):
                 EPG_URLS.keys()), 500
     try:
         get = httpGET(EPG_URLS[stream])
-        info = get.return_epg()
+        epg = get.return_epg()
     except Exception, err:
         logger.exception(err)
         return str(err), 500 
 
-    return info
+    return json.dumps(epg, ensure_ascii=False)
 
 #@ws.route('/admin/version', methods=['GET'])
 #def get_version():
