@@ -76,11 +76,8 @@ class httpGET():
 
     def return_epg(self):
         # Init variables
-        epg = dict()
         today = datetime.now()
-        today_key = today.strftime('%A %d %B %Y')
         time = today.time()
-        epg[today_key] = list()
 
         # Grep html page
         soup = BeautifulSoup(self._page)
@@ -97,17 +94,16 @@ class httpGET():
 
         # Extract data from containers
         for tag in soup.findAll("div", attrs=main_container):
-            prog = dict()
+            epg = dict()
             for div in tag.findAll("div"):
                 if div["class"] in sub_attrs:
-                    prog[sub_attrs[div["class"]]] = str(div.string)
-            if prog != {}:
-                if datetime.strptime(prog['heure début'], '%H:%M').time() <= time \
+                    epg[sub_attrs[div["class"]]] = str(div.string)
+            if epg != {}:
+                if datetime.strptime(epg['heure début'], '%H:%M').time() <= time \
                    and \
-                   datetime.strptime(prog['heure fin'], '%H:%M').time() >= time:
-                    epg[today_key].append(prog)
+                   datetime.strptime(epg['heure fin'], '%H:%M').time() >= time:
                     break
-        return json.dumps(epg, ensure_ascii=False)
+        return epg
 
 if __name__ == "__main__":
     import sys
