@@ -90,7 +90,9 @@ class httpGET():
                         'heurefin_prog hidden': 'heure fin',
                         'lib_prog': 'titre',
                         'duree_prog hidden' : 'durée',
-                        'duree_prog' : 'durée',
+                        'duree_prog': 'durée',
+                        'desc_prog': 'description',
+                        'img_prog': 'photo',
                     }
 
         # Extract data from containers
@@ -98,11 +100,15 @@ class httpGET():
             epg = dict()
             for div in tag.findAll("div"):
                 if div["class"] in sub_attrs:
-                    epg[sub_attrs[div["class"]]] = str(div.string)
+                    if div["class"] == 'img_prog':
+                        epg[sub_attrs[div["class"]]] = str(div.find('img')['alt'])
+                    else:
+                        epg[sub_attrs[div["class"]]] = str(div.string)
             if epg != {}:
                 if datetime.strptime(epg['heure début'], '%H:%M').time() <= time \
                    and \
                    datetime.strptime(epg['heure fin'], '%H:%M').time() >= time:
+                    epg['photo'] = 'http://static-tv.s-sfr.fr/img/epg/' + epg['photo']
                     break
         return epg
 
