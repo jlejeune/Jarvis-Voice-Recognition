@@ -3,7 +3,6 @@
 
 import urllib2
 import re
-import json
 from datetime import datetime
 from BeautifulSoup import BeautifulSoup, SoupStrainer
 
@@ -18,6 +17,7 @@ This class permits to get beers and epg from websites :
 ##############################################################################
 # EPG URLS
 PREFIX_URL = 'http://tv.sfr.fr/epg/maintenant/'
+# Classic
 TF1_URL = PREFIX_URL + '?id_chaine=1'
 FRANCE2_URL = PREFIX_URL + '?id_chaine=2'
 FRANCE3_URL = PREFIX_URL + '?id_chaine=3'
@@ -27,16 +27,29 @@ M6_URL = PREFIX_URL + '?id_chaine=6'
 ARTE_URL = PREFIX_URL + '?id_chaine=7'
 D8_URL = PREFIX_URL + '?id_chaine=8'
 W9_URL = PREFIX_URL + '?id_chaine=9'
-# ...
 FRANCE4_URL = PREFIX_URL + '?id_chaine=14'
 BFM_URL = PREFIX_URL + '?id_chaine=15'
 ITELE_URL = PREFIX_URL + '?id_chaine=16'
-# ...
+TEVA_URL = PREFIX_URL + '?id_chaine=27'
+PARIS_PREMIERE_URL = PREFIX_URL + '?id_chaine=27'
+FASHION_TV_URL = PREFIX_URL + '?id_chaine=116'
+# CANAL +
 CANALPLUSCINEMA_URL = PREFIX_URL + 'Les%20chaînes%20Canal%20+-4/?id_chaine=23'
 CANALPLUSSPORT_URL = PREFIX_URL + 'Les%20chaînes%20Canal%20+-4/?id_chaine=24'
 CANALPLUSFAMILY_URL = PREFIX_URL + 'Les%20chaînes%20Canal%20+-4/?id_chaine=25'
-FASHION_TV_URL = PREFIX_URL + '?id_chaine=116'
+# DORCEL
 DORCEL_URL = PREFIX_URL + 'Grand%20Spectacle-9/?id_chaine=128'
+# BE IN SPORT
+BEINSPORT_URL = PREFIX_URL + 'Sélection%20+%20beIN%20SPORT-11/?id_chaine=20'
+BEINSPORT2_URL = PREFIX_URL + 'Sélection%20+%20beIN%20SPORT-11/?id_chaine=21'
+GIRONDINS_TV_URL = PREFIX_URL + 'Sélection%20+%20beIN%20SPORT-11/?id_chaine=57'
+# M6
+M6_MUSIC_BLACK_URL = PREFIX_URL + 'Sélection%20+%20beIN%20SPORT-11/?id_chaine=96'
+M6_MUSIC_CLUB_URL = PREFIX_URL + 'Sélection%20+%20beIN%20SPORT-11/?id_chaine=97'
+M6_MUSIC_HITS_URL = PREFIX_URL + '?id_chaine=86'
+M6_BOUTIQUE_AND_CO_URL = PREFIX_URL + '?id_chaine=71'
+# Others
+BEST_OF_SHOPPING_URL = PREFIX_URL + '?id_chaine=73'
 
 EPG_URLS = {
             'tf1': TF1_URL,
@@ -56,6 +69,16 @@ EPG_URLS = {
             'canalplus family': CANALPLUSFAMILY_URL,
             'fashion tv': FASHION_TV_URL,
             'dorcel tv': DORCEL_URL,
+            'paris première': PARIS_PREMIERE_URL,
+            'téva': TEVA_URL,
+            'be in sport': BEINSPORT_URL,
+            'be in sport 2': BEINSPORT2_URL,
+            'girondins tv': GIRONDINS_TV_URL,
+            'm6 music black': M6_MUSIC_BLACK_URL,
+            'm6 music club': M6_MUSIC_CLUB_URL,
+            'm6 music hits': M6_MUSIC_HITS_URL,
+            'm6 boutique and co': M6_BOUTIQUE_AND_CO_URL,
+            'best of shopping': BEST_OF_SHOPPING_URL,
            }
 ##############################################################################
 
@@ -108,7 +131,10 @@ class httpGET():
                 if datetime.strptime(epg['heure début'], '%H:%M').time() <= time \
                    and \
                    datetime.strptime(epg['heure fin'], '%H:%M').time() >= time:
-                    epg['photo'] = 'http://static-tv.s-sfr.fr/img/epg/' + epg['photo']
+                    if epg['photo'] != '':
+                        epg['photo'] = 'http://static-tv.s-sfr.fr/img/epg/' + epg['photo']
+                    else:
+                        epg['photo'] = None
                     break
         return epg
 
