@@ -89,6 +89,7 @@ class httpGET():
                         'heure_prog': 'heure début',
                         'heurefin_prog hidden': 'heure fin',
                         'lib_prog': 'titre',
+                        'duree_prog hidden' : 'durée',
                         'duree_prog' : 'durée',
                     }
 
