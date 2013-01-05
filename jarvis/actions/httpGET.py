@@ -131,7 +131,7 @@ class httpGET():
                 if datetime.strptime(epg['heure début'], '%H:%M').time() <= time \
                    and \
                    datetime.strptime(epg['heure fin'], '%H:%M').time() >= time:
-                    if epg['photo'] != '':
+                    if 'photo' in epg and epg['photo'] != '':
                         epg['photo'] = 'http://static-tv.s-sfr.fr/img/epg/' + epg['photo']
                     else:
                         epg['photo'] = None
