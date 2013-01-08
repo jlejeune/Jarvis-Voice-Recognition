@@ -27,7 +27,7 @@ def get_epg(stream=None):
         for stream in EPG_URLS:
             try:
                 get = httpGET(EPG_URLS[stream])
-                info = get.return_epg()
+                info = get.return_epg(stream)
                 epg.append(info)
             except Exception, err:
                 logger.exception(err)
@@ -37,7 +37,7 @@ def get_epg(stream=None):
         stream = stream.encode('utf8', "ignore")
         try:
             get = httpGET(EPG_URLS[stream])
-            epg = get.return_epg()
+            epg = get.return_epg(stream)
         except Exception, err:
             logger.exception(err)
             return str(err), 500
