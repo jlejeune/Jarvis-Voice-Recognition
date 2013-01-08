@@ -97,7 +97,7 @@ class httpGET():
             beers.append(tag.string.split('(')[0].strip())
         return beers
 
-    def return_epg(self, stream):
+    def return_epg(self, stream, full=False):
         # Init variables
         today = datetime.now()
         time = today.time()
@@ -119,6 +119,7 @@ class httpGET():
                     }
 
         # Extract data from containers
+        full_epg = list()
         for tag in soup.findAll("div", attrs=main_container):
             epg = dict()
             for div in tag.findAll("div"):
@@ -128,9 +129,7 @@ class httpGET():
                     else:
                         epg[sub_attrs[div["class"]]] = str(div.string)
             if epg != {}:
-                if datetime.strptime(epg['heure début'], '%H:%M').time() <= time \
-                   and \
-                   datetime.strptime(epg['heure fin'], '%H:%M').time() >= time:
+                if full:
                     if 'photo' in epg and epg['photo'] != '':
                         epg['photo'] = 'http://static-tv.s-sfr.fr/img/epg/' + epg['photo']
                     else:
@@ -139,8 +138,25 @@ class httpGET():
                     # Define stream name
                     epg ['chaine'] = stream
 
-                    break
-        return epg
+                    # Add epg in full list
+                    full_epg.append(epg)
+                else:
+                    if datetime.strptime(epg['heure début'], '%H:%M').time() <= time \
+                       and \
+                       datetime.strptime(epg['heure fin'], '%H:%M').time() >= time:
+                        if 'photo' in epg and epg['photo'] != '':
+                            epg['photo'] = 'http://static-tv.s-sfr.fr/img/epg/' + epg['photo']
+                        else:
+                            epg['photo'] = None
+
+                        # Define stream name
+                        epg ['chaine'] = stream
+
+                        # Add epg in full list
+                        full_epg.append(epg)
+                        break
+        #return epg
+        return full_epg
 
 if __name__ == "__main__":
     import sys
