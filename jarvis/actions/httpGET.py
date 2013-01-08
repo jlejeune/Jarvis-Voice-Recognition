@@ -97,7 +97,7 @@ class httpGET():
             beers.append(tag.string.split('(')[0].strip())
         return beers
 
-    def return_epg(self):
+    def return_epg(self, stream):
         # Init variables
         today = datetime.now()
         time = today.time()
@@ -135,6 +135,10 @@ class httpGET():
                         epg['photo'] = 'http://static-tv.s-sfr.fr/img/epg/' + epg['photo']
                     else:
                         epg['photo'] = None
+
+                    # Define stream name
+                    epg ['chaine'] = stream
+
                     break
         return epg
 
@@ -157,7 +161,7 @@ if __name__ == "__main__":
         print ','.join(get.return_menu())
     elif action == 'epg':
         if len(input_string) != 0:
-            stream = input_string.pop(0)
+            stream = ' '.join(input_string)
             if stream in EPG_URLS:
                 website = EPG_URLS[stream]
             else:
@@ -169,7 +173,7 @@ if __name__ == "__main__":
 
         # Init httpGET object with given website
         get = httpGET(website)
-        print get.return_epg()
+        print get.return_epg(stream)
     else:
         print 'Given action is not defined!\nOnly beer or epg for now'
         sys.exit(1)
