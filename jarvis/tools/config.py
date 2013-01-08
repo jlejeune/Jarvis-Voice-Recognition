@@ -77,7 +77,7 @@ class JarvisServerConfig(optparse.OptionParser):
                          type="string",
                          help="Set the base directory where log files will \
                                be stored (default: %default)",
-                         default="/var/log/ncdn-os-server/")
+                         default="/var/log/jarvis-server/")
 
         group.add_option("--log-backup",
                          dest="logbackup",
