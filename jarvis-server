@@ -1,0 +1,61 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+# vim:set ai et sts=4 sw=4:
+
+import os, sys
+from jarvis.flask import application, options, actions
+from jarvis.tools.daemon import WSGIDaemon
+import logging, logging.handlers
+
+__version__ = "0.0.1"
+
+
+def configure_logging(options):
+
+    if options.verbose:
+        loglevel = logging.DEBUG
+    else:
+        loglevel = logging.INFO
+    logging.getLogger().setLevel(loglevel)
+
+    if options.logdir and options.logdir != "":
+        logger = logging.getLogger('jarvis-server')
+        error_log = os.path.join(options.logdir, "error.log")
+        hdlr = logging.handlers.TimedRotatingFileHandler(error_log,
+                                                         'midnight',
+                                                         options.logbackup)
+        hdlr.setLevel(loglevel)
+        format_string = "%(asctime)s %(name)10s: %(levelname)7s:  %(message)s"
+        hdlr.setFormatter(logging.Formatter(fmt=format_string,
+                                            datefmt='[%Y/%m/%d %H:%M:%S]'))
+        logger.addHandler(hdlr)
+
+        if sys.stdin.isatty():
+            logger = logging.getLogger()
+            format_string = "%(name)s: %(levelname)7s:  %(message)s"
+            hdlr = logging.StreamHandler()
+            hdlr.setLevel(loglevel)
+            hdlr.setFormatter(logging.Formatter(fmt=format_string,
+                                                datefmt='[%Y/%m/%d %H:%M:%S]'))
+            logger.addHandler(hdlr)
+
+
+if __name__ == "__main__":
+    configure_logging(options)
+    daemon_server = WSGIDaemon(application, options)
+
+    if len(actions) > 0:
+        if 'start' == actions[0]:
+            daemon_server.start()
+        elif 'stop' == actions[0]:
+            daemon_server.stop()
+        elif 'restart' == actions[0]:
+            daemon_server.restart()
+        else:
+            print "Unknown command"
+            print "Usage: %s start|stop|restart" % sys.argv[0]
+            sys.exit(1)
+    elif options.daemonize:
+        daemon_server.start()
+    else:
+        daemon_server.run()
