@@ -44,6 +44,38 @@ def get_epg(stream=None):
 
     return json.dumps(epg, ensure_ascii=False)
 
+@epg.route('/epg/<stream>/full', methods=['GET'])
+@epg.route('/epg/full', methods=['GET'])
+def get_full_epg(stream=None):
+    """
+    Get full epg from given stream or get full epg if no one stream is given
+    @param stream    : stream
+    """
+    if stream != None and stream.encode('utf8', "ignore") not in EPG_URLS:
+        return 'Your given stream %s is not defined in  [%s]' % (stream,
+               ', '.join(EPG_URLS.keys())), 500
+    elif stream == None:
+        epg = list()
+        for stream in EPG_URLS:
+            try:
+                get = httpGET(EPG_URLS[stream])
+                info = get.return_epg(stream, True)
+                epg.append(info)
+            except Exception, err:
+                logger.exception(err)
+                return str(err), 500
+    else:
+        # Encode in utf8 given param (it's in unicode)
+        stream = stream.encode('utf8', "ignore")
+        try:
+            get = httpGET(EPG_URLS[stream])
+            epg = get.return_epg(stream, True)
+        except Exception, err:
+            logger.exception(err)
+            return str(err), 500
+
+    return json.dumps(epg, ensure_ascii=False)
+
 #@ws.route('/admin/version', methods=['GET'])
 #def get_version():
 #    """
