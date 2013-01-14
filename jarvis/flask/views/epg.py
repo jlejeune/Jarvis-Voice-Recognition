@@ -29,12 +29,11 @@ def get_epg(stream=None):
     epg = list()
 
     if stream == None:
-        for stream in EPG_URLS:
-            try:
-                elmts = selector.get_epg(stream)
-            except Exception, err:
-                logger.exception(err)
-                return str(err), 500
+        try:
+            elmts = selector.get_full_epg()
+        except Exception, err:
+            logger.exception(err)
+            return str(err), 500
     else:
         # Encode in utf8 given param (it's in unicode)
         stream = stream.encode('utf8', "ignore")
