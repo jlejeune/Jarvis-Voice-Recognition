@@ -100,7 +100,6 @@ class httpGET():
     def return_epg(self, stream, full=False):
         # Init variables
         today = datetime.now()
-        time = today.time()
 
         # Grep html page
         soup = BeautifulSoup(self._page)
@@ -108,9 +107,8 @@ class httpGET():
         # Define containers to extract data
         main_container = {'class': 'epg_element_prog_container'}
         sub_attrs = {
-                        'date_prog hidden': 'jour',
-                        'heure_prog': 'heure début',
-                        'heurefin_prog hidden': 'heure fin',
+                        'deb_prog hidden': 'heure début',
+                        'fin_prog hidden': 'heure fin',
                         'lib_prog': 'titre',
                         'duree_prog hidden' : 'durée',
                         'duree_prog': 'durée',
@@ -129,33 +127,29 @@ class httpGET():
                     else:
                         epg[sub_attrs[div["class"]]] = str(div.string)
             if epg != {}:
+                # Define stream name
+                epg ['chaine'] = stream
+
+                # Define photo
+                if 'photo' in epg and epg['photo'] != '':
+                    epg['photo'] = 'http://static-tv.s-sfr.fr/img/epg/' + epg['photo']
+                else:
+                    epg['photo'] = None
+
+                # Init description if not defined
+                if 'description' not in epg:
+                    epg['description'] = None
+
                 if full:
-                    if 'photo' in epg and epg['photo'] != '':
-                        epg['photo'] = 'http://static-tv.s-sfr.fr/img/epg/' + epg['photo']
-                    else:
-                        epg['photo'] = None
-
-                    # Define stream name
-                    epg ['chaine'] = stream
-
                     # Add epg in full list
                     full_epg.append(epg)
                 else:
-                    if datetime.strptime(epg['heure début'], '%H:%M').time() <= time \
+                    if datetime.fromtimestamp(int(epg['heure début'])) <= today \
                        and \
-                       datetime.strptime(epg['heure fin'], '%H:%M').time() >= time:
-                        if 'photo' in epg and epg['photo'] != '':
-                            epg['photo'] = 'http://static-tv.s-sfr.fr/img/epg/' + epg['photo']
-                        else:
-                            epg['photo'] = None
-
-                        # Define stream name
-                        epg ['chaine'] = stream
-
+                       datetime.fromtimestamp(int(epg['heure fin'])) >= today:
                         # Add epg in full list
                         full_epg.append(epg)
                         break
-        #return epg
         return full_epg
 
 if __name__ == "__main__":
@@ -180,16 +174,21 @@ if __name__ == "__main__":
             stream = ' '.join(input_string)
             if stream in EPG_URLS:
                 website = EPG_URLS[stream]
+
+                # Init httpGET object with given website
+                get = httpGET(website)
+                print get.return_epg(stream)
             else:
                 print "Your stream is not defined in : %s" % EPG_URLS.keys()
                 sys.exit(1)
         else:
-            print "You have to specify a stream arg in : %s" % EPG_URLS.keys()
-            sys.exit(1)
+            for stream in EPG_URLS:
+                print stream
+                website = EPG_URLS[stream]
 
-        # Init httpGET object with given website
-        get = httpGET(website)
-        print get.return_epg(stream)
+                # Init httpGET object with given website
+                get = httpGET(website)
+                print get.return_epg(stream)
     else:
         print 'Given action is not defined!\nOnly beer or epg for now'
         sys.exit(1)
