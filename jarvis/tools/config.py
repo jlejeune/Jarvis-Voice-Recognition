@@ -75,9 +75,16 @@ class JarvisServerConfig(optparse.OptionParser):
         group.add_option("--logdir",
                          dest="logdir",
                          type="string",
-                         help="Set the base directory where log files will \
+                         help="Set the directory where log files will \
                                be stored (default: %default)",
                          default="/var/log/jarvis-server/")
+
+        group.add_option("--basedir",
+                         dest="basedir",
+                         type="string",
+                         help="Set the directory where sqlite database will \
+                               be stored (default: %default)",
+                         default="/var/lib/jarvis-server/")
 
         group.add_option("--log-backup",
                          dest="logbackup",
