@@ -60,3 +60,89 @@ class Epg(peewee.Model):
             return epg
         except Exception, err:
             return err
+
+if __name__ == "__main__":
+    '''
+    Unit test to valid Epg model class
+    '''
+    import sys
+    from sqlite3 import OperationalError
+
+    # Save given arg and test it
+    input_string = sys.argv
+    if len(input_string) < 2:
+        print("Usage: python %s action [arg]." % input_string[0])
+        sys.exit(1)
+
+    # Remove the program name from the argv list
+    input_string.pop(0)
+
+    # Analyze given action which should be now the first arg
+    action = input_string.pop(0)
+
+    if action == 'init':
+        try:
+            # Init table
+            Epg.create_table()
+        except OperationalError, err:
+            print err
+            sys.exit(1)
+    elif action == 'test':
+        try:
+            # Create sample epg
+            Epg.create(
+                start = datetime.now().replace(microsecond=0),
+                end = datetime.now().replace(microsecond=0),
+                stream = "tf1",
+                title = "Journal",
+                description = "test",
+                photo = None,
+                duration = "35min",
+            )
+        except OperationalError, err:
+            print err
+            sys.exit(1)
+    elif action == 'cleantest':
+        # Select * from epg where description == test
+        delete_query = Epg.delete().where(Epg.description == 'test')
+        try:
+            delete_query.execute()
+        except OperationalError, err:
+            print err
+            sys.exit(1)
+    elif action == 'clean':
+        # Select * from epg where start < today (at midnight)
+        midnight = datetime.now().replace(hour=0, minute=0, second=0,
+                microsecond=0)
+        delete_query = Epg.delete().where(Epg.start <= midnight)
+        try:
+            delete_query.execute()
+        except OperationalError, err:
+            print err
+            sys.exit(1)
+    elif action == 'select':
+        if len(input_string) != 0:
+            stream = input_string.pop(0)
+            # Select prog from epg for given stream currently
+            epg = Epg.select().where((Epg.stream == stream) \
+                                     & \
+                                     (Epg.start <= datetime.now()) \
+                                     & \
+                                     (Epg.end >= datetime.now()) \
+                                    )
+            try:
+                for prog in epg:
+                    print prog.stream, prog.title, prog.start, prog.end
+            except OperationalError, err:
+                print err
+                sys.exit(1)
+        else:
+            # Select * from epg
+            epg = Epg.select()
+            try:
+                for prog in epg:
+                    print prog.stream, prog.title, prog.start, prog.end
+            except OperationalError, err:
+                print err
+                sys.exit(1)
+    sys.exit(0)
