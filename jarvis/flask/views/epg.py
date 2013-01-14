@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 # vim:set ai et sts=4 sw=4:
 
-from flask import Blueprint
-import logging
 import json
-from jarvis.actions.httpGET import httpGET, EPG_URLS
+import logging
+from flask import Blueprint
+from jarvis.flask.models.epg import Epg
+from jarvis.actions.httpGET import EPG_URLS
 
 epg = Blueprint('epg', __name__)
 
@@ -22,13 +23,15 @@ def get_epg(stream=None):
     if stream != None and stream.encode('utf8', "ignore") not in EPG_URLS:
         return 'Your given stream %s is not defined in  [%s]' % (stream,
                ', '.join(EPG_URLS.keys())), 500
-    elif stream == None:
-        epg = list()
+
+    # Init epg instance and return variable
+    selector = Epg()
+    epg = list()
+
+    if stream == None:
         for stream in EPG_URLS:
             try:
-                get = httpGET(EPG_URLS[stream])
-                info = get.return_epg(stream)
-                epg.append(info)
+                elmts = selector.get_epg(stream)
             except Exception, err:
                 logger.exception(err)
                 return str(err), 500
@@ -36,11 +39,14 @@ def get_epg(stream=None):
         # Encode in utf8 given param (it's in unicode)
         stream = stream.encode('utf8', "ignore")
         try:
-            get = httpGET(EPG_URLS[stream])
-            epg = get.return_epg(stream)
+            elmts = selector.get_epg(stream)
         except Exception, err:
             logger.exception(err)
             return str(err), 500
+
+    # Save values in output variable
+    for prog in elmts:
+        epg.append(prog.to_json())
 
     return json.dumps(epg, ensure_ascii=False)
 
@@ -54,25 +60,29 @@ def get_full_epg(stream=None):
     if stream != None and stream.encode('utf8', "ignore") not in EPG_URLS:
         return 'Your given stream %s is not defined in  [%s]' % (stream,
                ', '.join(EPG_URLS.keys())), 500
-    elif stream == None:
-        epg = list()
-        for stream in EPG_URLS:
-            try:
-                get = httpGET(EPG_URLS[stream])
-                info = get.return_epg(stream, True)
-                epg.append(info)
-            except Exception, err:
-                logger.exception(err)
-                return str(err), 500
+
+    # Init epg instance and return variable
+    selector = Epg()
+    epg = list()
+
+    if stream == None:
+        try:
+            elmts = selector.get_full_epg(full=True)
+        except Exception, err:
+            logger.exception(err)
+            return str(err), 500
     else:
         # Encode in utf8 given param (it's in unicode)
         stream = stream.encode('utf8', "ignore")
         try:
-            get = httpGET(EPG_URLS[stream])
-            epg = get.return_epg(stream, True)
+            elmts = selector.get_epg(stream, full=True)
         except Exception, err:
             logger.exception(err)
             return str(err), 500
+
+    # Save values in output variable
+    for prog in elmts:
+        epg.append(prog.to_json())
 
     return json.dumps(epg, ensure_ascii=False)
 
