@@ -12,22 +12,28 @@ if __name__ == "__main__":
         website = EPG_URLS[stream]
 
         # Init httpGET object with given website
-        get = httpGET(website)
+        try:
+            get = httpGET(website)
+        except Exception, err:
+            print 'Error \'%s\' with this wbesite \'%s\'' % (err, website)
+            continue
         epg = get.return_epg(stream, full=True)
 
         # Save prog in epg database
         for prog in epg:
             try:
                 Epg.create(
-                    start = datetime.fromtimestamp(int(prog['heure début'])),
-                    end = datetime.fromtimestamp(int(prog['heure fin'])),
-                    stream = prog['chaine'],
-                    title = prog['titre'],
-                    description = prog['description'],
-                    photo = prog['photo'],
-                    duration = prog['durée'],
+                    start=datetime.fromtimestamp(int(prog['heure début'])),
+                    end=datetime.fromtimestamp(int(prog['heure fin'])),
+                    stream=prog['chaine'],
+                    title=prog['titre'],
+                    description=prog['description'],
+                    photo=prog['photo'],
+                    duration=prog['durée'],
                 )
             except IntegrityError, err:
                 pass
             except Exception, err:
-                print 'Error in save %s for stream %s : %s' % (prog, stream, err)
+                print 'Error in save %s for stream %s : %s' % (prog,
+                                                               stream,
+                                                               err)
