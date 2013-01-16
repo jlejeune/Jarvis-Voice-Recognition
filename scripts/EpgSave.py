@@ -15,7 +15,7 @@ if __name__ == "__main__":
         try:
             get = httpGET(website)
         except Exception, err:
-            print 'Error \'%s\' with this wbesite \'%s\'' % (err, website)
+            print 'Error \'%s\' with this website \'%s\'' % (err, website)
             continue
         epg = get.return_epg(stream, full=True)
 
