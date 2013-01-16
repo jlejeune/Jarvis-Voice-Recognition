@@ -4,6 +4,7 @@
 
 import os, sys
 from jarvis.flask import application, options, actions
+from jarvis.flask.models import init_databases
 from jarvis.tools.daemon import WSGIDaemon
 import logging, logging.handlers
 
@@ -40,8 +41,19 @@ def configure_logging(options):
             logger.addHandler(hdlr)
 
 
+def configure_db(options):
+    # Test if basedir folder exists
+    if not os.path.exists(options.basedir):
+        os.makedirs(options.basedir)
+
+    # Test if db is initialized
+    if not os.listdir(options.basedir):
+        init_databases()
+
+
 if __name__ == "__main__":
     configure_logging(options)
+    configure_db(options)
     daemon_server = WSGIDaemon(application, options)
 
     if len(actions) > 0:
