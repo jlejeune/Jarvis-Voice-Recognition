@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 # vim:set ai et sts=4 sw=4:
 
-import json
 import logging
-from flask import Blueprint
+from flask import json, Blueprint
 from jarvis.flask.models.epg import Epg
 from jarvis.actions.httpGET import EPG_URLS
 
@@ -27,7 +26,7 @@ def get_epg(stream=None):
 
     # Init epg instance and return variable
     selector = Epg()
-    epg = list()
+    epg = dict()
 
     if stream == None:
         try:
@@ -35,6 +34,10 @@ def get_epg(stream=None):
         except Exception, err:
             logger.exception(err)
             return str(err), 500
+
+        # Init output dict
+        for stream in EPG_URLS:
+            epg[stream] = list()
     else:
         # Encode in utf8 given param (it's in unicode)
         stream = stream.encode('utf8', "ignore")
@@ -44,9 +47,12 @@ def get_epg(stream=None):
             logger.exception(err)
             return str(err), 500
 
+        # Init output dict
+        epg[stream] = list()
+
     # Save values in output variable
     for prog in elmts:
-        epg.append(prog.to_json())
+        epg[prog.stream.encode('utf8', "ignore")].append(prog.to_json())
 
     return json.dumps(epg, ensure_ascii=False)
 
@@ -63,7 +69,7 @@ def get_full_epg(stream=None):
 
     # Init epg instance and return variable
     selector = Epg()
-    epg = list()
+    epg = dict()
 
     if stream == None:
         try:
@@ -71,6 +77,10 @@ def get_full_epg(stream=None):
         except Exception, err:
             logger.exception(err)
             return str(err), 500
+
+        # Init output dict
+        for stream in EPG_URLS:
+            epg[stream] = list()
     else:
         # Encode in utf8 given param (it's in unicode)
         stream = stream.encode('utf8', "ignore")
@@ -80,9 +90,12 @@ def get_full_epg(stream=None):
             logger.exception(err)
             return str(err), 500
 
+        # Init output dict
+        epg[stream] = list()
+
     # Save values in output variable
     for prog in elmts:
-        epg.append(prog.to_json())
+        epg[prog.stream.encode('utf8', "ignore")].append(prog.to_json())
 
     return json.dumps(epg, ensure_ascii=False)
 
