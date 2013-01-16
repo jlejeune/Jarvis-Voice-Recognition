@@ -21,8 +21,9 @@ def get_epg(stream=None):
     @param stream    : stream
     """
     if stream != None and stream.encode('utf8', "ignore") not in EPG_URLS:
-        return 'Your given stream %s is not defined in  [%s]' % (stream,
-               ', '.join(EPG_URLS.keys())), 500
+        return 'Your given stream %s is not defined in  [%s]'\
+                    % (stream.encode('utf8', "ignore"),
+                       ', '.join(EPG_URLS.keys())), 500
 
     # Init epg instance and return variable
     selector = Epg()
