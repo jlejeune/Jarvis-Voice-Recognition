@@ -99,7 +99,7 @@ def get_full_epg(stream=None):
 
     return jsonify(epg)
 
-@epg.route('/epg/list', methods=['GET'])
+@epg.route('/epg/streams', methods=['GET'])
 def get_streams():
     """
     Get a list of all streams
