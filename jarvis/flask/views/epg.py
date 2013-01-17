@@ -99,6 +99,13 @@ def get_full_epg(stream=None):
 
     return jsonify(epg)
 
+@epg.route('/epg/list', methods=['GET'])
+def get_streams():
+    """
+    Get a list of all streams
+    """
+    return jsonify(streams=EPG_URLS.keys())
+
 #@ws.route('/admin/version', methods=['GET'])
 #def get_version():
 #    """
