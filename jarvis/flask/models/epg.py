@@ -3,8 +3,10 @@
 
 import peewee
 from datetime import datetime
+from jarvis.flask import options
 
-db = peewee.SqliteDatabase('/var/lib/jarvis-server/epg.db')
+sqlite_database = options.basedir + 'epg.db'
+db = peewee.SqliteDatabase(sqlite_database)
 
 class Epg(peewee.Model):
     start = peewee.DateTimeField()
