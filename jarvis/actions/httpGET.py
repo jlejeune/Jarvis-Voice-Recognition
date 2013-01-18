@@ -54,33 +54,33 @@ M6_BOUTIQUE_AND_CO_URL = PREFIX_URL + '?id_chaine=71'
 BEST_OF_SHOPPING_URL = PREFIX_URL + '?id_chaine=73'
 
 EPG_URLS = {
-            'tf1': TF1_URL,
-            'france 2': FRANCE2_URL,
-            'france 3': FRANCE3_URL,
-            'france 5': FRANCE5_URL,
-            'm6': M6_URL,
-            'arté': ARTE_URL,
-            'd8': D8_URL,
-            'w9': W9_URL,
-            'france 4': FRANCE4_URL,
-            'bfm tv': BFM_URL,
-            'i télé': ITELE_URL,
-            'canalplus': CANALPLUS_URL,
-            'canalplus cinéma': CANALPLUSCINEMA_URL,
-            'canalplus sport': CANALPLUSSPORT_URL,
-            'canalplus family': CANALPLUSFAMILY_URL,
-            'fashion tv': FASHION_TV_URL,
-            'dorcel tv': DORCEL_URL,
-            'paris première': PARIS_PREMIERE_URL,
-            'téva': TEVA_URL,
-            'be in sport': BEINSPORT_URL,
-            'be in sport 2': BEINSPORT2_URL,
-            'girondins tv': GIRONDINS_TV_URL,
-            'm6 music black': M6_MUSIC_BLACK_URL,
-            'm6 music club': M6_MUSIC_CLUB_URL,
-            'm6 music hits': M6_MUSIC_HITS_URL,
-            'm6 boutique and co': M6_BOUTIQUE_AND_CO_URL,
-            'best of shopping': BEST_OF_SHOPPING_URL,
+            u'tf1': TF1_URL,
+            u'france 2': FRANCE2_URL,
+            u'france 3': FRANCE3_URL,
+            u'france 5': FRANCE5_URL,
+            u'm6': M6_URL,
+            u'arté': ARTE_URL,
+            u'd8': D8_URL,
+            u'w9': W9_URL,
+            u'france 4': FRANCE4_URL,
+            u'bfm tv': BFM_URL,
+            u'i télé': ITELE_URL,
+            u'canalplus': CANALPLUS_URL,
+            u'canalplus cinéma': CANALPLUSCINEMA_URL,
+            u'canalplus sport': CANALPLUSSPORT_URL,
+            u'canalplus family': CANALPLUSFAMILY_URL,
+            u'fashion tv': FASHION_TV_URL,
+            u'dorcel tv': DORCEL_URL,
+            u'paris première': PARIS_PREMIERE_URL,
+            u'téva': TEVA_URL,
+            u'be in sport': BEINSPORT_URL,
+            u'be in sport 2': BEINSPORT2_URL,
+            u'girondins tv': GIRONDINS_TV_URL,
+            u'm6 music black': M6_MUSIC_BLACK_URL,
+            u'm6 music club': M6_MUSIC_CLUB_URL,
+            u'm6 music hits': M6_MUSIC_HITS_URL,
+            u'm6 boutique and co': M6_BOUTIQUE_AND_CO_URL,
+            u'best of shopping': BEST_OF_SHOPPING_URL,
            }
 ##############################################################################
 
@@ -172,7 +172,7 @@ class httpGET():
                 traffic += div.text + '\n'
         traffic = traffic[:traffic.find(signature)].strip()
         traffic = BeautifulStoneSoup(traffic, convertEntities=BeautifulStoneSoup.HTML_ENTITIES)
-        return str(traffic)
+        return unicode(traffic)
 
 if __name__ == "__main__":
     import sys
