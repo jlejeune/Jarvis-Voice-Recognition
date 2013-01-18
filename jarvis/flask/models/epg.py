@@ -3,8 +3,17 @@
 
 import peewee
 from datetime import datetime
+import os
+import sys
+
+# Update path in order to execute script in standalone
+pkg_folder = os.path.dirname(os.path.abspath(__file__)) + '/../../..'
+if os.path.exists(os.path.join(pkg_folder, "jarvis")):
+    sys.path.insert(0, pkg_folder)
+
 from jarvis.flask import options
 
+# Define database
 sqlite_database = options.basedir + 'epg.db'
 db = peewee.SqliteDatabase(sqlite_database)
 
