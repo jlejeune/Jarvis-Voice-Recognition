@@ -4,14 +4,16 @@
 import urllib2
 import re
 from datetime import datetime
-from BeautifulSoup import BeautifulSoup, SoupStrainer
+from BeautifulSoup import BeautifulSoup, SoupStrainer, BeautifulStoneSoup
 
 '''
 This class permits to get beers and epg from websites :
     - http://www.lafinemousse.fr/carte
     - http://www.lafinemousse.fr/beers/search?locale=fr&query=kriek
     - http://tv.sfr.fr/epg/
-
+    - http://www.transilien.com/trafic/detailtrafictravaux (HTTP)
+    OR
+    - http://www.transilien.com/flux/rss/traficLigne?codeLigne=B (RSS)
 '''
 
 ##############################################################################
@@ -152,6 +154,26 @@ class httpGET():
                         break
         return full_epg
 
+
+    def return_traffic(self):
+        # Grep html page
+        soup = BeautifulSoup(self._page,fromEncoding="utf-8")
+
+        # Define container to extract data
+        container = {'class': 'etat_trafic_bloc'}
+
+        # Init output variable
+        traffic = ''
+        signature = 'SNCF Transilien'
+        for tag in soup.findAll("div", attrs=container):
+            for div in tag.findAll("h2"):
+                traffic += div.text + '\n'
+            for div in tag.findAll("p"):
+                traffic += div.text + '\n'
+        traffic = traffic[:traffic.find(signature)].strip()
+        traffic = BeautifulStoneSoup(traffic, convertEntities=BeautifulStoneSoup.HTML_ENTITIES)
+        return str(traffic)
+
 if __name__ == "__main__":
     import sys
     input_string = sys.argv
@@ -169,6 +191,11 @@ if __name__ == "__main__":
         # Init httpGET object with given website
         get = httpGET(website)
         print ','.join(get.return_menu())
+    elif action == 'traffic':
+        website = 'http://www.transilien.com/trafic/detailtrafictravaux/init?categorie=trafic&codeLigne=A'
+        # Init httpGET object with given website
+        get = httpGET(website)
+        print get.return_traffic()
     elif action == 'epg':
         if len(input_string) != 0:
             stream = ' '.join(input_string)
