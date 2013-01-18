@@ -34,5 +34,7 @@ application.config.update(vars(options))
 # Register modules
 from jarvis.flask.views.epg import epg
 from jarvis.flask.views.tts import tts
+from jarvis.flask.views.traffic import traffic
 application.register_blueprint(epg)
 application.register_blueprint(tts)
+application.register_blueprint(traffic)
