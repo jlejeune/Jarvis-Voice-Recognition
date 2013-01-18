@@ -2,7 +2,7 @@
 # vim:set ai et sts=4 sw=4:
 
 import logging
-from flask import jsonify, Blueprint
+from flask import Blueprint, json, Response
 from jarvis.flask.models.epg import Epg
 from jarvis.actions.httpGET import EPG_URLS
 
@@ -54,7 +54,8 @@ def get_epg(stream=None):
     for prog in elmts:
         epg[prog.stream.encode('utf8', "ignore")].append(prog.to_json())
 
-    return jsonify(epg)
+    return Response(json.dumps(epg, ensure_ascii=False),
+                    content_type='application/json; charset=utf-8')
 
 @epg.route('/epg/<stream>/full', methods=['GET'])
 @epg.route('/epg/full', methods=['GET'])
@@ -97,14 +98,16 @@ def get_full_epg(stream=None):
     for prog in elmts:
         epg[prog.stream.encode('utf8', "ignore")].append(prog.to_json())
 
-    return jsonify(epg)
+    return Response(json.dumps(epg, ensure_ascii=False),
+                    content_type='application/json; charset=utf-8')
 
 @epg.route('/epg/streams', methods=['GET'])
 def get_streams():
     """
     Get a list of all streams
     """
-    return jsonify(streams=EPG_URLS.keys())
+    return Response(json.dumps(EPG_URLS.keys(), ensure_ascii=False),
+                    content_type='application/json; charset=utf-8')
 
 #@ws.route('/admin/version', methods=['GET'])
 #def get_version():
