@@ -1,8 +1,16 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import sys
+import os
 from datetime import datetime
 from sqlite3 import IntegrityError
+
+# Update path in order to execute script in standalone
+pkg_folder = os.path.dirname(os.path.abspath(__file__)) + '/..'
+if os.path.exists(os.path.join(pkg_folder, "jarvis")):
+    sys.path.insert(0, pkg_folder)
+
 from jarvis.flask.models.epg import Epg
 from jarvis.actions.httpGET import httpGET, EPG_URLS
 
