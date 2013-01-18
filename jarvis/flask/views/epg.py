@@ -19,10 +19,9 @@ def get_epg(stream=None):
     Get epg from given stream or get full epg if no one stream is given
     @param stream    : stream
     """
-    if stream != None and stream.encode('utf8', "ignore") not in EPG_URLS:
-        return 'Your given stream %s is not defined in  [%s]'\
-                    % (stream.encode('utf8', "ignore"),
-                       ', '.join(EPG_URLS.keys())), 500
+    if stream != None and stream not in EPG_URLS:
+        return 'Your given stream %s is not defined in  [%s]' % (stream,
+               ', '.join(EPG_URLS.keys())), 500
 
     # Init epg instance and return variable
     selector = Epg()
@@ -39,8 +38,6 @@ def get_epg(stream=None):
         for stream in EPG_URLS:
             epg[stream] = list()
     else:
-        # Encode in utf8 given param (it's in unicode)
-        stream = stream.encode('utf8', "ignore")
         try:
             elmts = selector.get_epg(stream)
         except Exception, err:
@@ -52,7 +49,7 @@ def get_epg(stream=None):
 
     # Save values in output variable
     for prog in elmts:
-        epg[prog.stream.encode('utf8', "ignore")].append(prog.to_json())
+        epg[prog.stream].append(prog.to_json())
 
     return Response(json.dumps(epg, ensure_ascii=False),
                     content_type='application/json; charset=utf-8')
@@ -64,7 +61,7 @@ def get_full_epg(stream=None):
     Get full epg from given stream or get full epg if no one stream is given
     @param stream    : stream
     """
-    if stream != None and stream.encode('utf8', "ignore") not in EPG_URLS:
+    if stream != None and stream not in EPG_URLS:
         return 'Your given stream %s is not defined in  [%s]' % (stream,
                ', '.join(EPG_URLS.keys())), 500
 
@@ -83,8 +80,6 @@ def get_full_epg(stream=None):
         for stream in EPG_URLS:
             epg[stream] = list()
     else:
-        # Encode in utf8 given param (it's in unicode)
-        stream = stream.encode('utf8', "ignore")
         try:
             elmts = selector.get_epg(stream, full=True)
         except Exception, err:
@@ -96,7 +91,7 @@ def get_full_epg(stream=None):
 
     # Save values in output variable
     for prog in elmts:
-        epg[prog.stream.encode('utf8', "ignore")].append(prog.to_json())
+        epg[prog.stream].append(prog.to_json())
 
     return Response(json.dumps(epg, ensure_ascii=False),
                     content_type='application/json; charset=utf-8')
