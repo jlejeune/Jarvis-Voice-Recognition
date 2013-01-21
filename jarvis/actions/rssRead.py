@@ -18,9 +18,11 @@ class Feed:
         item_node = file_xml.getElementsByTagName("item")
 
         # define output body
-        body = dict()
+        output = list()
 
         for item in item_node:
+            # init one body per item
+            body = dict()
             # get title
             title = item.childNodes[1]
             body[title.tagName] = title.firstChild.data
@@ -37,9 +39,13 @@ class Feed:
             date = item.childNodes[7]
             body[date.tagName] = date.firstChild.data
 
-        return body
+            # append body in output variable
+            output.append(body)
+
+        return output
 
 
 if __name__ == "__main__":
-    feed = Feed('http://www.transilien.com/flux/rss/traficLigne?codeLigne=A')
+    #feed = Feed('http://www.transilien.com/flux/rss/traficLigne?codeLigne=A')
+    feed = Feed('http://www.transilien.com/flux/rss/traficLigne')
     print feed.body()
