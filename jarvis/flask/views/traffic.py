@@ -13,18 +13,26 @@ VALID_TRAINS = ('A', 'B', 'C', 'D', 'H', 'J', 'L', 'N', 'P')
 
 ### GET methods ###
 @traffic.route('/traffic/<train>', methods=['GET'])
-def get_traffic(train):
+@traffic.route('/traffic', methods=['GET'])
+def get_traffic(train=None):
     """
     Get traffic for given train (between : A, B, C, D, H, J, L, N, P)
-    @param train : letter 
+    @param train : letter
     """
-    if train in VALID_TRAINS:
+    if train != None and train not in VALID_TRAINS:
+        return 'Your train must be in [%s]' % ', '.join(VALID_TRAINS), 500
+
+    if train == None:
+        website = 'http://www.transilien.com/flux/rss/traficLigne'
+        # Init Feed object with given website
+        feed = Feed(website)
+        dict_traffic = {'traffic': feed.body()}
+    else:
         root_website = 'http://www.transilien.com/flux/rss/traficLigne?codeLigne='
         website = root_website + train
         # Init Feed object with given website
         feed = Feed(website)
         dict_traffic = {train: feed.body()}
-        return Response(json.dumps(dict_traffic, ensure_ascii=False),
-                        content_type='application/json; charset=utf-8')
-    else:
-        return 'Your train must be in [%s]' % ', '.join(VALID_TRAINS), 500
+
+    return Response(json.dumps(dict_traffic, ensure_ascii=False),
+                    content_type='application/json; charset=utf-8')
