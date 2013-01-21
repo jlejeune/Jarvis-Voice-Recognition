@@ -9,16 +9,16 @@ traffic = Blueprint('traffic', __name__)
 
 logger = logging.getLogger('jarvis-server.traffic')
 
+VALID_TRAINS = ('A', 'B', 'C', 'D', 'H', 'J', 'L', 'N', 'P')
 
 ### GET methods ###
 @traffic.route('/traffic/<train>', methods=['GET'])
 def get_traffic(train):
     """
-    Get traffic for given train (between : A, B, C, D, E, H, J, K, L, N, P, R, U)
+    Get traffic for given train (between : A, B, C, D, H, J, L, N, P)
     @param train : letter 
     """
-    valid_trains = ('A', 'B', 'C', 'D', 'E', 'H', 'J', 'K', 'L', 'N', 'P', 'R', 'U')
-    if train in valid_trains:
+    if train in VALID_TRAINS:
         root_website = 'http://www.transilien.com/flux/rss/traficLigne?codeLigne='
         website = root_website + train
         # Init Feed object with given website
@@ -27,4 +27,4 @@ def get_traffic(train):
         return Response(json.dumps(dict_traffic, ensure_ascii=False),
                         content_type='application/json; charset=utf-8')
     else:
-        return 'Your train must be in [%s]' % ', '.join(valid_trains), 500
+        return 'Your train must be in [%s]' % ', '.join(VALID_TRAINS), 500
