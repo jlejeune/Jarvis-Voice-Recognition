@@ -28,7 +28,7 @@ def play_sound(filename):
     @param filename : mp3 file you want to play (without first /)
     """
     if os.path.exists('/' + filename):
-        synthesizer().play('/' + filename)
+        synthesizer().playNB('/' + filename)
         return 'OK'
     else:
         return 'Given filename /%s does not exist' % filename, 400
