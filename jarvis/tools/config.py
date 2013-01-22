@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 # vim:set ai et sts=4 sw=4:
 
-import ConfigParser, optparse
+import ConfigParser
+import optparse
 
 options = None
+
 
 # Callbacks definition
 def list_callback(option, opt, value, parser):
     setattr(parser.values, option.dest, value.split(','))
+
 
 ###############################################################################
 #
@@ -86,12 +89,19 @@ class JarvisServerConfig(optparse.OptionParser):
                                be stored (default: %default)",
                          default="/var/lib/jarvis-server/")
 
+        group.add_option("--voicemaildir",
+                         dest="voicemaildir",
+                         type="string",
+                         help="Set the directory where voice mail will \
+                               be stored (default: %default)",
+                         default="/tmp/")
+
         group.add_option("--log-backup",
                          dest="logbackup",
-                         type = "int",
-                         help = "Keep DAYS logfile (default: %default)",
-                         default = 180,
-                         metavar = "DAYS")
+                         type="int",
+                         help="Keep DAYS logfile (default: %default)",
+                         default=180,
+                         metavar="DAYS")
 
         group.add_option("--listen-addr",
                          dest="listen_addr",
@@ -133,7 +143,8 @@ class JarvisServerConfig(optparse.OptionParser):
         try:
             func = getattr(daemon, options.wsgi_server)
         except AttributeError:
-            self.error("%s is not a supported wsgi server"%options.wsgi_server)
+            self.error("%s is not a supported wsgi server"
+                    % options.wsgi_server)
 
         if options.daemonize and not options.pidfile:
             self.error("A pidfile must be supplied in daemon mode")
@@ -164,5 +175,8 @@ class JarvisServerConfig(optparse.OptionParser):
 
         if 'logdir' not in config and self.get_option('--logdir'):
             config['logdir'] = defaults.logdir
+
+        if 'voicemaildir' not in config and self.get_option('--voicemaildir'):
+            config['voicemaildir'] = defaults.voicemaildir
 
         return config
