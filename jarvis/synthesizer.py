@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import os
 import gst
 import gobject
 from urllib2 import Request, urlopen
@@ -11,11 +12,8 @@ MAX_WRAP = 100
 
 '''
 This class permits to generate speech via Google Translate Text-to-Speech API.
-
-Need packages :
-    - python-gst
-    - python-gobject
 '''
+
 
 class synthesizer():
     def __init__(self):
@@ -70,7 +68,27 @@ class synthesizer():
         # Play
         self.player.set_state(gst.STATE_PLAYING)
 
-    def download(self, text, lang="en", filename="translate_tts"):
+    def play(self, filename, volume=1.5):
+        # Init url from given filename
+        url = 'file://' + os.path.abspath(filename)
+        # Create the player
+        self.player = gst.element_factory_make("playbin", "player")
+        # Provide the source which is a stream
+        self.setUri(url)
+        # Val from 0.0 to 10 (float)
+        self.setVolume(volume)
+        # Play
+        self.player.set_state(gst.STATE_PLAYING)
+
+        # Get the bus (to send catch connect signals..)
+        bus = self.player.get_bus()
+        bus.add_signal_watch_full(1)
+        # Connect end of stream to the callback
+        bus.connect("message::eos", self.on_finish)
+        # Wait an event
+        self.mainloop.run()
+
+    def download(self, text, lang="fr", filename="translate_tts"):
         # Open file
         fout = file(filename + ".mp3", "wb")
         for splitted_lines in textwrap.wrap(text, MAX_WRAP):
@@ -94,19 +112,33 @@ if __name__ == "__main__":
     input_string = sys.argv
 
     if len(input_string) < 3:
-        print("Usage: python %s language_code Your text separated with spaces."
-                % input_string[0])
+        print("Usage:\npython %s say|download your text separated with spaces\
+                \nOR\npython %s play filename you want to play"
+                % (input_string[0], input_string[0]))
         sys.exit(1)
 
     # Remove the program name from the argv list
     input_string.pop(0)
-    # Take the language which should be now the first args
-    lang = input_string[0]
-    input_string.pop(0)
-    # Convert to url all the rest (with + replacing spaces)
-    tts_string = '+'.join(input_string)
+    # Take the action which should be now the first args
+    action = input_string.pop(0)
 
-    synthesizer().say(tts_string, lang)
-    #synthesizer().download(tts_string, lang)
+    if action == 'say':
+        # Convert to url all the rest (with + replacing spaces)
+        tts_string = '+'.join(input_string)
+        synthesizer().say(tts_string)
+    elif action == 'download':
+        # Convert to url all the rest (with + replacing spaces)
+        tts_string = '+'.join(input_string)
+        synthesizer().download(tts_string)
+    elif action in ('play'):
+        # Take last option that has to be filename
+        filename = input_string.pop(0)
+        if os.path.exists(filename):
+            synthesizer().play(filename)
+        else:
+            print 'Given filename %s does not exist' % filename
+    else:
+        print 'Action must be say|download|play'
+        sys.exit(1)
 
     sys.exit(0)
