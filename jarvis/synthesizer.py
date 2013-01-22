@@ -88,6 +88,18 @@ class synthesizer():
         # Wait an event
         self.mainloop.run()
 
+    def playNB(self, filename, volume=1.5):
+        # Init url from given filename
+        url = 'file://' + os.path.abspath(filename)
+        # Create the player
+        self.player = gst.element_factory_make("playbin", "player")
+        # Provide the source which is a stream
+        self.setUri(url)
+        # Val from 0.0 to 10 (float)
+        self.setVolume(volume)
+        # Play
+        self.player.set_state(gst.STATE_PLAYING)
+
     def download(self, text, lang="fr", filename="translate_tts"):
         # Open file
         fout = file(filename + ".mp3", "wb")
