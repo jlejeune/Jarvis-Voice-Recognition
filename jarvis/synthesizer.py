@@ -6,6 +6,7 @@ import os
 import gst
 import gobject
 from urllib2 import Request, urlopen
+import urllib
 import textwrap
 
 MAX_WRAP = 100
@@ -107,7 +108,8 @@ class synthesizer():
             req = Request(url='http://translate.google.com/translate_tts')
             # Needed otherwise return 403 Forbidden
             req.add_header('User-Agent', 'My agent !')
-            req.add_data("tl=" + lang + "&q=" + splitted_lines + "&ie=UTF-8")
+            req.add_data("tl=" + lang + "&q=" +
+                    urllib.quote_plus(splitted_lines) + "&ie=UTF-8")
             fin = urlopen(req)
             mp3 = fin.read()
             fout.write(mp3)
