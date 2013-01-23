@@ -3,8 +3,10 @@
 
 import os
 import logging
+import glob
 from datetime import datetime
-from flask import Blueprint
+from flask import Blueprint, jsonify
+
 from jarvis.synthesizer import synthesizer
 from jarvis.flask import options
 
@@ -23,6 +25,7 @@ def speak(text):
     synthesizer().say(text, 'fr')
     return 'OK'
 
+
 @tts.route('/tts/play/<path:filename>', methods=['GET'])
 def play_sound(filename):
     """
@@ -35,6 +38,7 @@ def play_sound(filename):
     else:
         return 'Given filename /%s does not exist' % filename, 400
 
+
 @tts.route('/tts/save/<text>', methods=['GET'])
 def save_sound(text):
     """
@@ -45,3 +49,11 @@ def save_sound(text):
                datetime.now().strftime('%Y%m%d%H%M%S')
     synthesizer().download(text, filename=filename)
     return 'OK'
+
+
+@tts.route('/tts/messages', methods=['GET'])
+def get_msg():
+    """
+    Return list of messages from voicemaildir
+    """
+    return jsonify(messages=[glob.glob(options.voicemaildir + 'msg_*.mp3')])
