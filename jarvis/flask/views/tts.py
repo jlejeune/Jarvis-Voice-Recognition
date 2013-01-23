@@ -47,7 +47,7 @@ def save_sound(text):
     """
     filename = options.voicemaildir + 'msg_' +\
                datetime.now().strftime('%Y%m%d%H%M%S')
-    synthesizer().download(text, filename=filename)
+    synthesizer().download(text.encode('utf8', "ignore"), filename=filename)
     return 'OK'
 
 
