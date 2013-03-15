@@ -11,7 +11,7 @@ class Feed:
 
     def body(self):
         get = httpGET(self.url)
-        file_feed = get._page
+        file_feed = get._page.encode('utf-8')
         file_xml = minidom.parseString(file_feed)
 
         # get item node
