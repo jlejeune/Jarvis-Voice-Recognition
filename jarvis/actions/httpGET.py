@@ -19,7 +19,7 @@ This class permits to get beers, epg, traffic and menu from websites :
 
 ##############################################################################
 # EPG URLS
-PREFIX_URL = 'http://tv.sfr.fr/epg/maintenant/'
+PREFIX_URL = 'http://tv.sfr.fr/epg/demain/'
 # Classic
 TF1_URL = PREFIX_URL + '?id_chaine=1'
 FRANCE2_URL = PREFIX_URL + '?id_chaine=2'
