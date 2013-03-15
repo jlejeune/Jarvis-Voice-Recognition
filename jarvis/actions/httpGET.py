@@ -7,13 +7,14 @@ from datetime import datetime
 from BeautifulSoup import BeautifulSoup, SoupStrainer, BeautifulStoneSoup
 
 '''
-This class permits to get beers and epg from websites :
+This class permits to get beers, epg, traffic and menu from websites :
     - http://www.lafinemousse.fr/carte
     - http://www.lafinemousse.fr/beers/search?locale=fr&query=kriek
     - http://tv.sfr.fr/epg/
     - http://www.transilien.com/trafic/detailtrafictravaux (HTTP)
     OR
     - http://www.transilien.com/flux/rss/traficLigne?codeLigne=B (RSS)
+    - http://restauration-sfr.fr
 '''
 
 ##############################################################################
@@ -85,8 +86,18 @@ EPG_URLS = {
 ##############################################################################
 
 class httpGET():
-    def __init__(self, website):
-        self._page = requests.get(website).text
+    def __init__(self, website, _type='GET', data=None, cookies=None):
+        if _type == 'GET':
+            self.request = requests.get(website,
+                                        data=data,
+                                        cookies=cookies)
+        elif _type == 'POST':
+            self.request = requests.post(website,
+                                         data=data,
+                                         cookies=cookies)
+
+        # Definep page
+        self._page = self.request.text
 
     def return_beers(self):
         beers_links = SoupStrainer('a', href=re.compile('beers'))
@@ -97,6 +108,20 @@ class httpGET():
         for tag in soup.findAll("a"):
             beers.append(tag.string.split('(')[0].strip())
         return beers
+
+    def return_menu(self):
+        # Grep html page
+        soup = BeautifulSoup(self._page)
+
+        # Define output variable
+        menu = []
+
+        # Extract menu
+        for tag in soup.findAll("div", attrs='menu-body'):
+            for subtag in tag.findAll("span"):
+                if '=' not in subtag.text:
+                    menu.append(subtag.text)
+        return menu
 
     def return_epg(self, stream, full=False):
         # Init variables
@@ -156,7 +181,7 @@ class httpGET():
 
     def return_traffic(self):
         # Grep html page
-        soup = BeautifulSoup(self._page,fromEncoding="utf-8")
+        soup = BeautifulSoup(self._page, fromEncoding="utf-8")
 
         # Define container to extract data
         container = {'class': 'etat_trafic_bloc'}
@@ -190,6 +215,22 @@ if __name__ == "__main__":
         # Init httpGET object with given website
         get = httpGET(website)
         print ','.join(get.return_beers())
+    elif action == 'menu':
+        # First step to get cookie
+        website = 'http://restauration-sfr.fr/Restaurant.aspx?spsId=249'
+        # Init httpGET object with given website
+        get = httpGET(website)
+
+        # Last step to get menu
+        website = 'http://restauration-sfr.fr/ajaxWidgetMenu.aspx'
+        # Init sample data to post
+        data = 'divId=8131&spsId=249&day=2013-03-14&widgetMenu=false'
+        # Init httpGET object with given website, data and cookie
+        get = httpGET(website,
+                      _type='POST',
+                      data=data,
+                      cookies=get.request.cookies)
+        print ','.join(get.return_menu())
     elif action == 'traffic':
         website = 'http://www.transilien.com/trafic/detailtrafictravaux/init?categorie=trafic&codeLigne=A'
         # Init httpGET object with given website
