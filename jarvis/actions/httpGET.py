@@ -89,7 +89,7 @@ class httpGET():
         self.website = website
         self._page = urllib2.urlopen(self.website)
 
-    def return_menu(self):
+    def return_beers(self):
         beers_links = SoupStrainer('a', href=re.compile('beers'))
         soup = BeautifulSoup(self._page, parseOnlyThese=beers_links)
         beers = []
@@ -190,7 +190,7 @@ if __name__ == "__main__":
         website = 'http://www.lafinemousse.fr/carte'
         # Init httpGET object with given website
         get = httpGET(website)
-        print ','.join(get.return_menu())
+        print ','.join(get.return_beers())
     elif action == 'traffic':
         website = 'http://www.transilien.com/trafic/detailtrafictravaux/init?categorie=trafic&codeLigne=A'
         # Init httpGET object with given website
