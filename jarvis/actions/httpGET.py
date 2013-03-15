@@ -114,13 +114,21 @@ class httpGET():
         soup = BeautifulSoup(self._page)
 
         # Define output variable
-        menu = []
+        menu = {}
 
         # Extract menu
         for tag in soup.findAll("div", attrs='menu-body'):
             for subtag in tag.findAll("span"):
-                if '=' not in subtag.text:
-                    menu.append(subtag.text)
+                if '=' in subtag.text:
+                    continue
+                elif subtag.text == u'Plats du jour':
+                    key = subtag.text
+                    menu[key] = []
+                elif subtag.text == u'Légumes du jour':
+                    key = subtag.text
+                    menu[key] = []
+                else:
+                    menu[key].append(subtag.text)
         return menu
 
     def return_epg(self, stream, full=False):
@@ -230,7 +238,7 @@ if __name__ == "__main__":
                       _type='POST',
                       data=data,
                       cookies=get.request.cookies)
-        print ','.join(get.return_menu())
+        print get.return_menu()
     elif action == 'traffic':
         website = 'http://www.transilien.com/trafic/detailtrafictravaux/init?categorie=trafic&codeLigne=A'
         # Init httpGET object with given website
