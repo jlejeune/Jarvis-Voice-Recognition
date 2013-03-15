@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import urllib2
+import requests
 import re
 from datetime import datetime
 from BeautifulSoup import BeautifulSoup, SoupStrainer, BeautifulStoneSoup
@@ -86,8 +86,7 @@ EPG_URLS = {
 
 class httpGET():
     def __init__(self, website):
-        self.website = website
-        self._page = urllib2.urlopen(self.website)
+        self._page = requests.get(website).text
 
     def return_beers(self):
         beers_links = SoupStrainer('a', href=re.compile('beers'))
