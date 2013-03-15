@@ -118,8 +118,8 @@ class httpGET():
 
         # Extract menu
         for tag in soup.findAll("div", attrs='menu-body'):
-            for subtag in tag.findAll("span"):
-                if '=' in subtag.text:
+            for subtag in tag.findAll(["span", "div"]):
+                if '=' in subtag.text or subtag.text == '':
                     continue
                 elif subtag.text == u'Plats du jour':
                     key = subtag.text
@@ -127,7 +127,7 @@ class httpGET():
                 elif subtag.text == u'Légumes du jour':
                     key = subtag.text
                     menu[key] = []
-                else:
+                elif subtag.text not in menu[key]:
                     menu[key].append(subtag.text)
         return menu
 
