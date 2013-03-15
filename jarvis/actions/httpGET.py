@@ -111,7 +111,7 @@ class httpGET():
 
     def return_menu(self):
         # Grep html page
-        soup = BeautifulSoup(self._page)
+        soup = BeautifulSoup(self._page, convertEntities=BeautifulSoup.HTML_ENTITIES)
 
         # Define output variable
         menu = {}
