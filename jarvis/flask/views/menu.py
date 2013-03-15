@@ -31,13 +31,16 @@ def get_menu(date=None):
 
     # Check date
     if date!= None and not re.compile(r'(\d){8}').search(date):
-        return 'Given date \'%s\' is not in the good shape, it must be YYYYMMDD' % date, 500
+        return 'Given date \'%s\' is not in the good shape, it must be YYYYMMDD' % date, 400
 
     if date == None:
         date = datetime.now()
         date = date.strftime('%Y-%m-%d')
     else:
-        date = datetime.strptime(date, '%Y%m%d').strftime('%Y-%m-%d')
+        try:
+            date = datetime.strptime(date, '%Y%m%d').strftime('%Y-%m-%d')
+        except ValueError, err:
+            return 'Given date \'%s\' is not valid : %s' % (date, err), 400
 
     # Init sample data to post
     data = 'divId=8131&spsId=249&day=%s&widgetMenu=false' % date
