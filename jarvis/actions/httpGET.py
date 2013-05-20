@@ -85,6 +85,7 @@ EPG_URLS = {
            }
 ##############################################################################
 
+
 class httpGET():
     def __init__(self, website, _type='GET', data=None, cookies=None):
         if _type == 'GET':
@@ -119,14 +120,14 @@ class httpGET():
         # Extract menu
         for tag in soup.findAll("div", attrs='menu-body'):
             for subtag in tag.findAll(["span", "div"]):
-                if '=' in subtag.text or subtag.text == '':
+                if subtag.text.startswith(u'Plats du jour'):
+                    key = u'Plats du jour'
+                    menu[key] = []
+                elif subtag.text.startswith(u'Légumes du jour'):
+                    key = u'Légumes du jour'
+                    menu[key] = []
+                elif '=' in subtag.text or subtag.text == '':
                     continue
-                elif subtag.text == u'Plats du jour':
-                    key = subtag.text
-                    menu[key] = []
-                elif subtag.text == u'Légumes du jour':
-                    key = subtag.text
-                    menu[key] = []
                 elif subtag.text not in menu[key]:
                     menu[key].append(subtag.text)
         return menu
@@ -144,7 +145,7 @@ class httpGET():
                         'deb_prog hidden': 'heure début',
                         'fin_prog hidden': 'heure fin',
                         'lib_prog': 'titre',
-                        'duree_prog hidden' : 'durée',
+                        'duree_prog hidden': 'durée',
                         'duree_prog': 'durée',
                         'desc_prog': 'description',
                         'img_prog': 'photo',
@@ -162,7 +163,7 @@ class httpGET():
                         epg[sub_attrs[div["class"]]] = str(div.string)
             if epg != {}:
                 # Define stream name
-                epg ['chaine'] = stream
+                epg['chaine'] = stream
 
                 # Define photo
                 if 'photo' in epg and epg['photo'] != '':
@@ -185,7 +186,6 @@ class httpGET():
                         full_epg.append(epg)
                         break
         return full_epg
-
 
     def return_traffic(self):
         # Grep html page
