@@ -24,9 +24,14 @@ def get_traffic(train=None):
 
     if train == None:
         website = 'http://www.transilien.com/flux/rss/traficLigne'
-        # Init Feed object with given website
-        feed = Feed(website)
-        dict_traffic = {'traffic': feed.body()}
+        # Init Feed object with given website and get body
+        body = Feed(website).body()
+        dict_traffic = {}
+        for train in body:
+            title = train['title'].split(':')[0].strip()
+            dict_traffic[title] = train
+            dict_traffic[title]['status'] = train['title'].split(':')[1].strip()
+            del dict_traffic[title]['title']
     else:
         root_website = 'http://www.transilien.com/flux/rss/traficLigne?codeLigne='
         website = root_website + train
