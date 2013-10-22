@@ -35,9 +35,12 @@ def get_traffic(train=None):
     else:
         root_website = 'http://www.transilien.com/flux/rss/traficLigne?codeLigne='
         website = root_website + train
-        # Init Feed object with given website
-        feed = Feed(website)
-        dict_traffic = {train: feed.body()}
+        # Init Feed object with given website and get body
+        body = Feed(website).body()
+        for event in body:
+            event['status'] = event['title'].split(':')[1].strip()
+            del event['title']
+        dict_traffic = {train: body}
 
     return Response(json.dumps(dict_traffic, ensure_ascii=False),
                     content_type='application/json; charset=utf-8')
