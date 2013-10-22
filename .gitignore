@@ -7,3 +7,7 @@
 *.wav
 *.mp3
 *.flac
+
+# Debian package folder #
+#########################
+debian/*
