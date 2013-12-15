@@ -12,17 +12,11 @@ logger = logging.getLogger('jarvis-server.traffic')
 VALID_TRAINS = ('A', 'B', 'C', 'D', 'H', 'J', 'L', 'N', 'P')
 
 
-### GET methods ###
-@traffic.route('/traffic/<train>', methods=['GET'])
-@traffic.route('/traffic', methods=['GET'])
-def get_traffic(train=None):
-    """
-    Get traffic for given train (between : A, B, C, D, H, J, L, N, P)
-    @param train : letter
-    """
-    if train is not None and train not in VALID_TRAINS:
-        return 'Your train must be in [%s]' % ', '.join(VALID_TRAINS), 400
-
+###############################################################################
+#
+#
+#
+def get_common_traffic(train=None):
     if train is None:
         website = 'http://www.transilien.com/flux/rss/traficLigne'
         # Init Feed object with given website and get body
@@ -52,5 +46,43 @@ def get_traffic(train=None):
             del event['title']
         dict_traffic = {train: body}
 
+    return dict_traffic
+
+
+###############################################################################
+#
+### GET methods ###
+#
+@traffic.route('/traffic/<train>', methods=['GET'])
+@traffic.route('/traffic', methods=['GET'])
+def get_traffic(train=None):
+    """
+    Get traffic for given train (between : A, B, C, D, H, J, L, N, P)
+    @param train : letter
+    """
+    if train is not None and train not in VALID_TRAINS:
+        return 'Your train must be in [%s]' % ', '.join(VALID_TRAINS), 400
+
+    dict_traffic = get_common_traffic(train)
+
     return Response(json.dumps(dict_traffic, ensure_ascii=False),
                     content_type='application/json; charset=utf-8')
+
+
+@traffic.route('/traffic/<train>/min', methods=['GET'])
+def get_min_traffic(train):
+    """
+    Get minimalist traffic for given train (between : A, B, C, D, H, J, L, N, P)
+    @param train : letter
+    """
+    if train not in VALID_TRAINS:
+        return 'Your train must be in [%s]' % ', '.join(VALID_TRAINS), 400
+
+    dict_traffic = get_common_traffic(train)
+    intro = 'Trafic sur la ligne %s: ' % train
+    try:
+        status = dict_traffic[train][0]['status']
+    except IndexError:
+        status = 'aucun incident en cours, trafic normal'
+
+    return Response(intro + status)
