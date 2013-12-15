@@ -20,7 +20,7 @@ def get_traffic(train=None):
     @param train : letter
     """
     if train != None and train not in VALID_TRAINS:
-        return 'Your train must be in [%s]' % ', '.join(VALID_TRAINS), 500
+        return 'Your train must be in [%s]' % ', '.join(VALID_TRAINS), 400
 
     if train == None:
         website = 'http://www.transilien.com/flux/rss/traficLigne'
