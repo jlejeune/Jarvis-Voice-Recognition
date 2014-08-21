@@ -1,7 +1,4 @@
-jarvis
-======
+Jarvis-Voice-Recognition
+========================
 
-TODO
-- possibility to choose language in tts methods
-- method to send e-mail
-- putio view/model to download, list, put files
+Server interpreting voice commands
