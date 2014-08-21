@@ -3,6 +3,7 @@
 
 import logging
 from flask import Blueprint, json, Response
+from jarvis.flask.wrappers import tts_callback
 from jarvis.actions.rssRead import Feed
 
 traffic = Blueprint('traffic', __name__)
@@ -70,6 +71,7 @@ def get_traffic(train=None):
 
 
 @traffic.route('/traffic/<train>/min', methods=['GET'])
+@tts_callback
 def get_min_traffic(train):
     """
     Get minimalist traffic for given train (between : A, B, C, D, H, J, L, N, P)
