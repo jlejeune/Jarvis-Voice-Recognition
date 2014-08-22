@@ -7,7 +7,7 @@ import glob
 from datetime import datetime
 from flask import Blueprint, jsonify
 
-from jarvis.synthesizer import synthesizer
+from jarvis.synthesizer import select_synthesizer, LocalSynthesizer
 from jarvis.flask import options
 
 tts = Blueprint('tts', __name__)
@@ -22,7 +22,8 @@ def speak(text):
     Speech given text
     @param text : string
     """
-    synthesizer().say(text, 'fr')
+    synthesizer = select_synthesizer()
+    synthesizer.say(text)
     return 'OK'
 
 
@@ -33,7 +34,7 @@ def play_sound(filename):
     @param filename : mp3 file you want to play (without first /)
     """
     if os.path.exists('/' + filename):
-        synthesizer().playNB('/' + filename)
+        LocalSynthesizer().playNB('/' + filename)
         return 'OK'
     else:
         return 'Given filename /%s does not exist' % filename, 400
@@ -46,8 +47,8 @@ def save_sound(text):
     @param text : string text to save in voicemail
     """
     filename = options.voicemaildir + 'msg_' +\
-               datetime.now().strftime('%Y%m%d%H%M%S')
-    synthesizer().download(text.encode('utf8', "ignore"), filename=filename)
+        datetime.now().strftime('%Y%m%d%H%M%S')
+    LocalSynthesizer().download(text.encode('utf8', "ignore"), filename=filename)
     return 'OK'
 
 

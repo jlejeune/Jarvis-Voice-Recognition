@@ -4,7 +4,7 @@
 from flask import request
 from functools import wraps
 
-from jarvis.synthesizer import synthesizer
+from jarvis.synthesizer import select_synthesizer
 
 
 def tts_callback(func):
@@ -15,8 +15,9 @@ def tts_callback(func):
         if callback == 'tts':
             data = func(*args, **kwargs).data
             if data == '' or not isinstance(data, str):
-                data = "Nothing to say!" 
-            synthesizer().say(data, 'fr')
+                data = "Nothing to say!"
+            synthesizer = select_synthesizer()
+            synthesizer.say(data)
             return ('', 204)
         else:
             return func(*args, **kwargs)
