@@ -8,7 +8,7 @@ from jarvis.actions.rssRead import Feed
 
 traffic = Blueprint('traffic', __name__)
 
-logger = logging.getLogger('jarvis-server.traffic')
+logger = logging.getLogger(__name__)
 
 VALID_TRAINS = ('A', 'B', 'C', 'D', 'H', 'J', 'L', 'N', 'P')
 

@@ -14,8 +14,7 @@ def list_callback(option, opt, value, parser):
 
 ###############################################################################
 #
-# Small class to parse configuration file and handle some options from the
-# command line
+# Small class to parse configuration file and handle some options from the command line
 class JarvisServerConfig(optparse.OptionParser):
 
     def __init__(self, *args, **kwargs):
@@ -25,7 +24,7 @@ class JarvisServerConfig(optparse.OptionParser):
         self.__add_default_options()
 
     def __add_default_options(self):
-        self.add_option("-C",
+        self.add_option("-c",
                         "--config",
                         dest="config_file",
                         help="read configuration from FILE",
@@ -36,12 +35,6 @@ class JarvisServerConfig(optparse.OptionParser):
                         "--verbose",
                         action="count",
                         dest="verbose")
-
-        self.add_option("-q",
-                        "--quiet",
-                        action="store_false",
-                        dest="verbose",
-                        help="don't print status messages to stdout")
 
     def add_options_client(self):
         """ Default option when connecting a client to the webservice """
@@ -139,12 +132,11 @@ class JarvisServerConfig(optparse.OptionParser):
 
         self.add_option_group(group)
 
-    def check_options_server(self, daemon, options, actions):
+    def check_options_server(self, daemon, options):
         try:
             func = getattr(daemon, options.wsgi_server)
         except AttributeError:
-            self.error("%s is not a supported wsgi server"
-                    % options.wsgi_server)
+            self.error("%s is not a supported wsgi server" % options.wsgi_server)
 
         if options.daemonize and not options.pidfile:
             self.error("A pidfile must be supplied in daemon mode")

@@ -12,7 +12,7 @@ from jarvis.flask import options
 
 tts = Blueprint('tts', __name__)
 
-logger = logging.getLogger('jarvis-server.tts')
+logger = logging.getLogger(__name__)
 
 
 ### GET methods ###

@@ -4,42 +4,13 @@
 
 import os
 import sys
+
 from jarvis.flask import application, options, actions
 from jarvis.flask.models import init_databases
 from jarvis.tools.daemon import WSGIDaemon
-import logging
-import logging.handlers
+from jarvis.tools.log import configure_logging
 
 __version__ = "0.0.1"
-
-
-def configure_logging(options):
-    if options.verbose:
-        loglevel = logging.DEBUG
-    else:
-        loglevel = logging.INFO
-    logging.getLogger().setLevel(loglevel)
-
-    if options.logdir and options.logdir != "":
-        logger = logging.getLogger('jarvis-server')
-        error_log = os.path.join(options.logdir, "error.log")
-        hdlr = logging.handlers.TimedRotatingFileHandler(error_log,
-                                                         'midnight',
-                                                         options.logbackup)
-        hdlr.setLevel(loglevel)
-        format_string = "%(asctime)s %(name)10s: %(levelname)7s:  %(message)s"
-        hdlr.setFormatter(logging.Formatter(fmt=format_string,
-                                            datefmt='[%Y/%m/%d %H:%M:%S]'))
-        logger.addHandler(hdlr)
-
-        if sys.stdin.isatty():
-            logger = logging.getLogger()
-            format_string = "%(name)s: %(levelname)7s:  %(message)s"
-            hdlr = logging.StreamHandler()
-            hdlr.setLevel(loglevel)
-            hdlr.setFormatter(logging.Formatter(fmt=format_string,
-                                                datefmt='[%Y/%m/%d %H:%M:%S]'))
-            logger.addHandler(hdlr)
 
 
 def configure_db(options):
@@ -53,7 +24,7 @@ def configure_db(options):
 
 
 if __name__ == "__main__":
-    configure_logging(options)
+    configure_logging(application)
     configure_db(options)
     daemon_server = WSGIDaemon(application, options)
 
