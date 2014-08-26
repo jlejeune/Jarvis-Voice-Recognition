@@ -25,8 +25,8 @@ class Karotz(object):
         self.tts = type('TTS', (_TTS,), attributes)
         self.state = type('State', (_State,), attributes)
 
-    def request(self, path, method='GET', params=None, data=None, files=None,
-                headers=None, raw=False):
+    def request(self, path, method='GET', params=None, data=None,
+                files=None, headers=None, timeout=None, raw=False):
         """
         Wrapper around requests.request()
 
@@ -45,9 +45,14 @@ class Karotz(object):
         logger.debug('url: %s', url)
 
         try:
-            response = self.session.request(
-                method, url, params=params, data=data, files=files,
-                headers=headers, allow_redirects=True)
+            response = self.session.request(method,
+                                            url,
+                                            params=params,
+                                            data=data,
+                                            files=files,
+                                            headers=headers,
+                                            timeout=timeout,
+                                            allow_redirects=True)
         except requests.exceptions.ConnectionError, err:
             raise Exception(err)
 
@@ -103,7 +108,7 @@ class _State(_Action):
 
     @classmethod
     def get_version(cls):
-        return cls.karotz.request('/get_version', method='GET')
+        return cls.karotz.request('/get_version', method='GET', timeout=1)
 
 
 if __name__ == "__main__":
