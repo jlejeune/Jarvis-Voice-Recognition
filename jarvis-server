@@ -2,25 +2,14 @@
 # -*- coding: utf-8 -*-
 # vim:set ai et sts=4 sw=4:
 
-import os
 import sys
 
 from jarvis.flask import application, options, actions
-from jarvis.flask.models import init_databases
 from jarvis.tools.daemon import WSGIDaemon
+from jarvis.tools.db import configure_db
 from jarvis.tools.log import configure_logging
 
 __version__ = "0.0.1"
-
-
-def configure_db(options):
-    # Test if basedir folder exists
-    if not os.path.exists(options.basedir):
-        os.makedirs(options.basedir)
-
-    # Test if db is initialized
-    if not os.listdir(options.basedir):
-        init_databases()
 
 
 if __name__ == "__main__":
